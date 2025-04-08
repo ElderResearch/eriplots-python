@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # This corresponds to .python-versions
+        python-version: [3.9, 3.10, 3.11, 3.12, 3.13]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install uv
+      run: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+    - name: Run ruff
+      run: uv run ruff check src/eriplots
+
+    - name: Run pytest with coverage
+      run: uv run pytest tests --cov=src/eriplots --cov-branch --cov-report=term-missing --cov-report=html --cov-report=json
+
+    - name: Run mypy
+      run: uv run mypy src/eriplots
+
+    - name: Install package
+      run: uv pip install .
+
+    - name: Upload coverage reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-reports-${{ matrix.python-version }}
+        path: |
+          coverage.json
+          htmlcov/
+        retention-days: 90
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results-${{ matrix.python-version }}
+        path: |
+          .pytest_cache
+        retention-days: 90
