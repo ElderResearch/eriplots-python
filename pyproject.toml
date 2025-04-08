@@ -1,0 +1,27 @@
+[project]
+name = "eriplots"
+version = "0.1"
+description = """
+    A collection of tools for creating clean and consistent plots
+    using matplotlib. Provides standardized themes and tools for
+    saving figures that make it easier to follow good practices.
+    """
+authors = [{ name = "Tom Shafer", email = "tom.shafer@elderresearch.com" }]
+requires-python = ">=3.9"
+dependencies = ["cycler>=0.12.1", "matplotlib>=3.9.4"]
+license = "MIT"
+license-files = ["LICENSE.md"]
+
+[dependency-groups]
+dev = [
+    "mypy>=1.15.0",
+    "pytest>=8.3.5",
+    "ruff>=0.10.0",
+    "jupyter>=1.1.1",
+    "pytest-mock>=3.14.0",
+    "nbstripout>=0.8.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
