@@ -2,22 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.1.0] – 2025-04-08
+
+First *eriplots* release!
 
 ### Added
-- Initial project setup
 
-## [0.0.1] - 2024-04-04
+- Matplotlib style function
+- Augmented `subplots()`
+- Save figures in multiple formats
+- Color palettes and colormaps
 
-### Added
-- Project initialization
-- Basic plotting functionality
-- Standardized themes for matplotlib
-- Tools for saving figures
-- First release of the package
-
-[Unreleased]: https://github.com/yourusername/eriplots/compare/v0.0.1...HEAD
-[0.0.1]: https://github.com/yourusername/eriplots/releases/tag/v0.0.1 
+[0.1.0]: https://github.com/ElderResearch/eriplots-python/releases/tag/v0.1.0
