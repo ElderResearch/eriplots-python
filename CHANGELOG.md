@@ -16,4 +16,4 @@ First *eriplots* release!
 - Save figures in multiple formats
 - Color palettes and colormaps
 
-[0.1.0]: https://github.com/ElderResearch/eriplots-python/releases/tag/v0.1.0
+[0.1.0]: https://github.com/ElderResearch/eriplots-python/releases/tag/0.1.0
