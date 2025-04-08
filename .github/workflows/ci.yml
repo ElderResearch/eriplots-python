@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         # This corresponds to .python-versions
-        python-version: [3.9, 3.10, 3.11, 3.12, 3.13]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
 
     steps:
     - uses: actions/checkout@v4
@@ -31,7 +31,7 @@ jobs:
       run: uv run ruff check src/eriplots
 
     - name: Run pytest with coverage
-      run: uv run pytest tests --cov=src/eriplots --cov-branch --cov-report=term-missing --cov-report=html --cov-report=json
+      run: uv run pytest
 
     - name: Run mypy
       run: uv run mypy src/eriplots
