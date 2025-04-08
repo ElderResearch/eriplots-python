@@ -1,5 +1,7 @@
 # eriplots: Simple Plotting Utilities
 
+[![CI](https://github.com/ElderResearch/eriplots-python/actions/workflows/ci.yml/badge.svg)](https://github.com/ElderResearch/eriplots-python/actions/workflows/ci.yml)
+
 The *[eriplots][]* library for Python makes it a little easier to
 create clean, client-ready figures, inspired by *[Trees, maps,
 and theorems][tmth]* among others.
