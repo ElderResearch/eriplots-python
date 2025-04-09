@@ -27,3 +27,4 @@ First *eriplots* release!
 
 [Unreleased]: https://github.com/ElderResearch/eriplots-python/compare/0.1.0...develop
 [0.1.0]: https://github.com/ElderResearch/eriplots-python/releases/tag/0.1.0
+[0.1.1]: https://github.com/ElderResearch/eriplots-python/releases/tag/0.1.1
