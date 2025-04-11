@@ -1,10 +1,10 @@
 """Tests for matplotlib extensions."""
 
+import pytest
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
-import pytest
 
-from eriplots.mpl import AxesArray1D, AxesArray2D, subplots, alpha
+from eriplots.mpl import AxesArray1D, AxesArray2D, alpha, subplots
 
 
 def test_single_subplot():
