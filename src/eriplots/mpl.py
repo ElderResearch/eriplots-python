@@ -12,8 +12,7 @@ from matplotlib.figure import Figure
 from numpy import flatiter
 from numpy.typing import NDArray
 
-__all__ = ["subplots"]
-
+__all__ = ["subplots", "alpha"]
 
 # AxesArray objects to better hint subplots outputs ------------------
 
@@ -339,3 +338,40 @@ def subplots(
 
     else:
         raise ValueError(f"Axes array has ndim = {axes.ndim}")
+
+
+# Layer alpha values -------------------------------------------------
+
+
+def alpha(n: int, max_opacity: float = 0.85) -> float:
+    """Calculate alpha levels for stacked plot components.
+
+    This function calculates alpha (opacity) values for plot components
+    so that when n layers are stacked they have overall alpha =
+    max_opacity.
+
+    Args:
+        n: Target number of stacked layers.
+        max_opacity: The maximum opacity value at n (default: 0.85).
+
+    Returns:
+        A float between 0 and max_opacity.
+
+    Examples:
+        >>> alpha(1)  # Single component
+        0.85
+        >>> alpha(2)  # Two components, each with alpha ~ 0.613
+        0.6127016653792583
+        >>> alpha(3)  # Three components, each with alpha ~ 0.469
+        0.4686707154086944
+        >>> alpha(2, max_opacity=0.8)  # Custom max opacity
+        0.5527864045000421
+
+    """
+    if n <= 0:
+        raise ValueError("n must be positive")
+
+    if max_opacity <= 0 or max_opacity > 1:
+        raise ValueError("max_opacity must be between 0 and 1")
+
+    return 1 - (1 - max_opacity) ** (1 / n)

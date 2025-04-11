@@ -2,8 +2,9 @@
 
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
+import pytest
 
-from eriplots.mpl import AxesArray1D, AxesArray2D, subplots
+from eriplots.mpl import AxesArray1D, AxesArray2D, subplots, alpha
 
 
 def test_single_subplot():
@@ -143,3 +144,48 @@ def test_axes_array_2d_indexing():
     assert isinstance(axes[:, :], AxesArray2D)
     assert isinstance(axes[:, :1], AxesArray2D)
     assert isinstance(axes[:1, :1], AxesArray2D)
+
+
+def test_alpha_basic():
+    """Test basic alpha calculations."""
+    # Single component should have full opacity
+    assert alpha(1) == 0.85
+
+    # Two components should have alpha that when stacked reaches 1.0
+    a2 = alpha(2)
+    assert 1 - (1 - a2) ** 2 == 0.85
+
+    # Three components should have alpha that when stacked reaches 1.0
+    a3 = alpha(3)
+    assert 1 - (1 - a3) ** 3 == 0.85
+
+
+def test_alpha_max_opacity():
+    """Test alpha calculations with custom max_opacity."""
+    max_opacity = 0.8
+
+    # Single component should have specified max_opacity
+    assert alpha(1, max_opacity) == max_opacity
+
+    # Two components should have alpha that when stacked reaches max_opacity
+    a2 = alpha(2, max_opacity)
+    assert 1 - (1 - a2) ** 2 == max_opacity
+
+    # Three components should have alpha that when stacked reaches max_opacity
+    a3 = alpha(3, max_opacity)
+    assert 1 - (1 - a3) ** 3 == max_opacity
+
+
+def test_alpha_invalid_inputs():
+    """Test that invalid inputs raise appropriate errors."""
+    # n must be positive
+    with pytest.raises(ValueError, match="n must be positive"):
+        alpha(0)
+    with pytest.raises(ValueError, match="n must be positive"):
+        alpha(-1)
+
+    # max_opacity must be between 0 and 1
+    with pytest.raises(ValueError, match="max_opacity must be between 0 and 1"):
+        alpha(1, -0.1)
+    with pytest.raises(ValueError, match="max_opacity must be between 0 and 1"):
+        alpha(1, 1.1)

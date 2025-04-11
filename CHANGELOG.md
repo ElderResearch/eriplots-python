@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `alpha(n, max_opacity=0.85)` computes layer opacities such that
+  n layers stack with a cumulative `max_opacity`.
+
 ## [0.1.2] – 2025-04-10
 
 ### Added
