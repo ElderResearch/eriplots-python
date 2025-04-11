@@ -77,8 +77,8 @@ fig, axes = ep.subplots(nrows=3, ncols=5, aspect=0.618, flatten=True)
 
 The _eriplots_ library provides a `save_figures()` function that
 automatically store raster (PNG) and vector (PDF) copies of the
-figure by default. When available, `[optipng][]` is applied to
-any created PNGs.
+figure by default. When available, [`optipng`][optipng] is
+applied to any created PNGs.
 
 ```python
 import eriplots as ep
