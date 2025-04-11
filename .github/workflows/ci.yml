@@ -31,7 +31,7 @@ jobs:
       run: uv run ruff check src/eriplots
 
     - name: Run pytest with coverage
-      run: uv run pytest
+      run: uv run pytest --cov=src/eriplots --cov-branch --cov-report=term-missing --cov-report=html --cov-report=json
 
     - name: Run mypy
       run: uv run mypy src/eriplots

@@ -2,22 +2,210 @@
 
 from __future__ import annotations
 
+import warnings
 from typing import Literal, Optional, Union, overload
 
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
+from numpy import flatiter
 from numpy.typing import NDArray
 
 __all__ = ["subplots"]
+
+
+# AxesArray objects to better hint subplots outputs ------------------
+
+
+class AxesArray:
+    """Semi-transparent wrapper for arrays of Axes objects.
+
+    This class provides typed access to arrays of Axes objects while
+    maintaining numpy-like behavior. It automatically forwards
+    operations to the underlying NumPy array while ensuring proper type
+    hints for indexing operations.
+
+    Attributes:
+        np: The underlying NumPy array of Axes objects.
+
+    Note:
+        This is a base class that should not be used directly. Use
+        AxesArray1D or AxesArray2D instead, which provide type hints for
+        their respective dimensionalities.
+
+    """
+
+    def __init__(self, array: NDArray):
+        self.np = array
+
+    def __array__(self) -> NDArray:
+        """Mark this class as available for use with NumPy."""
+        return self.np
+
+    def __getattr__(self, name):
+        """Automatically dispatch to NumPy as a fallback."""
+        warnings.warn(f"Missing attribute '{name}' dispatching to NumPy")
+        return getattr(self.np, name)
+
+    # Basic numpy properties
+
+    @property
+    def shape(self) -> tuple[int, ...]:
+        return self.np.shape
+
+    @property
+    def size(self) -> int:
+        return self.np.size
+
+    @property
+    def ndim(self) -> int:
+        return len(self.shape)
+
+    # Wrangling shapes
+
+    def flatten(self) -> AxesArray1D:
+        return AxesArray1D(self.np.flatten())
+
+    def ravel(self) -> AxesArray1D:
+        return AxesArray1D(self.np.ravel())
+
+    @property
+    def flat(self) -> flatiter[NDArray]:
+        return self.np.flat
+
+
+class AxesArray1D(AxesArray):
+    """One-dimensional array of Axes with typed indexing.
+
+    This class provides type hints for indexing operations on 1D arrays
+    of Axes objects. Single indices return Axes objects, while slices
+    return new AxesArray1D instances.
+
+    Examples:
+        >>> fig, axes = subplots(1, 3)
+        >>> isinstance(axes[0], Axes)  # Single index returns Axes
+        True
+        >>> isinstance(axes[1:], AxesArray1D)  # Slice returns AxesArray1D
+        True
+    """
+
+    @overload
+    def __getitem__(self, key: Union[int, tuple[int]]) -> Axes: ...
+
+    @overload
+    def __getitem__(self, key: Union[slice, tuple[slice]]) -> AxesArray1D: ...
+
+    def __getitem__(
+        self,
+        key: Union[
+            int,
+            slice,
+            tuple[int],
+            tuple[slice],
+        ],
+    ) -> Union[Axes, AxesArray1D]:
+        """Index into the array of Axes objects.
+
+        Args:
+            key: Integer, slice, or 1D tuple of the same.
+
+        Returns:
+            Either a single Axes object or a new AxesArray1D instance,
+            depending on the indexing operation.
+
+        """
+        selection = self.np[key]
+        if isinstance(selection, Axes):
+            return selection
+        if isinstance(selection, np.ndarray) and selection.ndim == 1:
+            return AxesArray1D(selection.view())
+        raise ValueError(f"Invalid selection type or dimensionality: {type(selection)}")
+
+
+class AxesArray2D(AxesArray):
+    """Two-dimensional array of Axes with typed indexing.
+
+    This class provides type hints for indexing operations on 2D arrays
+    of Axes. The return type depends on the indexing operation:
+
+    - Single indices return AxesArray1D instances
+    - Double indices return Axes objects
+    - Slices return AxesArray2D instances
+
+    Examples:
+        >>> fig, axes = subplots(2, 2)
+        >>> isinstance(axes[0], AxesArray1D)  # Single index returns AxesArray1D
+        True
+        >>> isinstance(axes[0, 0], Axes)  # Double index returns Axes
+        True
+        >>> isinstance(axes[:, :1], AxesArray2D)  # Slice returns AxesArray2D
+        True
+    """
+
+    @overload
+    def __getitem__(self, key: tuple[int, int]) -> Axes: ...
+
+    @overload
+    def __getitem__(
+        self,
+        key: Union[
+            int,
+            tuple[int],
+            tuple[int, slice],
+            tuple[slice, int],
+        ],
+    ) -> AxesArray1D: ...
+
+    @overload
+    def __getitem__(
+        self,
+        key: Union[
+            slice,
+            tuple[slice],
+            tuple[slice, slice],
+        ],
+    ) -> AxesArray2D: ...
+
+    def __getitem__(
+        self,
+        key: Union[
+            int,
+            slice,
+            tuple[int],
+            tuple[slice],
+            tuple[int, int],
+            tuple[slice, slice],
+            tuple[int, slice],
+            tuple[slice, int],
+        ],
+    ) -> Union[Axes, AxesArray1D, AxesArray2D]:
+        """Index into the array of Axes objects.
+
+        Args:
+            key: An integer, slice, or tuple of integers/slices.
+
+        Returns:
+            Either a single Axes object, an AxesArray1D instance, or an
+            AxesArray2D instance, depending on the indexing operation.
+
+        """
+        selection = self.np[key]
+        if isinstance(selection, Axes):
+            return selection
+        if isinstance(selection, np.ndarray):
+            if selection.ndim == 1:
+                return AxesArray1D(selection.view())
+            if selection.ndim == 2:
+                return AxesArray2D(selection.view())
+        raise ValueError(f"Invalid selection type or dimensionality: {type(selection)}")
 
 
 # Extended version of matplotlib.pyplot.subplots ---------------------
 
 
 @overload
-def subplots(
+def subplots(  # type: ignore  # This actually works
     nrows: Literal[1] = 1,
     ncols: Literal[1] = 1,
     figsize: Optional[tuple[float, float]] = None,
@@ -31,6 +219,32 @@ def subplots(
 
 @overload
 def subplots(
+    nrows: Literal[1] = 1,
+    ncols: int = ...,
+    figsize: Optional[tuple[float, float]] = None,
+    aspect: Optional[float] = None,
+    dpi: Optional[int] = None,
+    flatten: bool = False,
+    shift: Union[float, tuple[float, float], Literal[True]] = 0,
+    **kw,
+) -> tuple[Figure, AxesArray1D]: ...
+
+
+@overload
+def subplots(
+    nrows: int = ...,
+    ncols: Literal[1] = 1,
+    figsize: Optional[tuple[float, float]] = None,
+    aspect: Optional[float] = None,
+    dpi: Optional[int] = None,
+    flatten: bool = False,
+    shift: Union[float, tuple[float, float], Literal[True]] = 0,
+    **kw,
+) -> tuple[Figure, AxesArray1D]: ...
+
+
+@overload
+def subplots(
     nrows: int,
     ncols: int,
     figsize: Optional[tuple[float, float]] = None,
@@ -39,7 +253,7 @@ def subplots(
     flatten: bool = False,
     shift: Union[float, tuple[float, float], Literal[True]] = 0,
     **kw,
-) -> tuple[Figure, NDArray]: ...
+) -> tuple[Figure, AxesArray2D]: ...
 
 
 def subplots(
@@ -51,7 +265,7 @@ def subplots(
     flatten: bool = False,
     shift: Union[float, tuple[float, float], Literal[True]] = 0,
     **kw,
-) -> tuple[Figure, Union[Axes, NDArray]]:
+) -> tuple[Figure, Union[Axes, AxesArray1D, AxesArray2D]]:
     """Create a figure and one or more subplots.
 
     This extends matplotlib.pyplot.subplots().
@@ -110,8 +324,18 @@ def subplots(
     if flatten and not isinstance(axes, Axes) and axes.ndim > 1:
         axes = axes.flatten()
 
-    # Nonsense with mypy x matplotlib x numpy
-    return_axes: Union[Axes, NDArray]
-    return_axes = axes.item() if ncols == 1 and nrows == 1 else axes
+    # If only one figure, return Axes
+    if ncols == 1 and nrows == 1:
+        retax: Axes = axes.item()
+        return fig, retax
 
-    return fig, return_axes
+    # If a flat array, return AxesArray1D
+    elif axes.ndim == 1:
+        return fig, AxesArray1D(axes)
+
+    # Otherwise, return a 2D array
+    elif axes.ndim == 2:
+        return fig, AxesArray2D(axes)
+
+    else:
+        raise ValueError(f"Axes array has ndim = {axes.ndim}")
