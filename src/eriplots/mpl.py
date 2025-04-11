@@ -17,23 +17,39 @@ __all__ = ["subplots"]
 
 # AxesArray objects to better hint subplots outputs ------------------
 
-KeyLike1D = Union[int, slice, tuple[int], tuple[slice]]
-
 
 class AxesArray:
+    """Semi-transparent wrapper for arrays of Axes objects.
+
+    This class provides typed access to arrays of Axes objects while
+    maintaining numpy-like behavior. It automatically forwards
+    operations to the underlying NumPy array while ensuring proper type
+    hints for indexing operations.
+
+    Attributes:
+        np: The underlying NumPy array of Axes objects.
+
+    Note:
+        This is a base class that should not be used directly. Use
+        AxesArray1D or AxesArray2D instead, which provide type hints for
+        their respective dimensionalities.
+
+    """
+
     def __init__(self, array: NDArray):
         self.np = array
 
-    # Operate with numpy
     def __array__(self) -> NDArray:
+        """Mark this class as available for use with NumPy."""
         return self.np
 
-    # Automatically dispatch to numpy as a fallback
     def __getattr__(self, name):
+        """Automatically dispatch to NumPy as a fallback."""
         warnings.warn(f"Missing attribute '{name}' dispatching to NumPy")
         return getattr(self.np, name)
 
     # Basic numpy properties
+
     @property
     def shape(self) -> tuple[int, ...]:
         return self.np.shape
@@ -47,6 +63,7 @@ class AxesArray:
         return len(self.shape)
 
     # Wrangling shapes
+
     def flatten(self) -> AxesArray1D:
         return AxesArray1D(self.np.flatten())
 
@@ -59,6 +76,20 @@ class AxesArray:
 
 
 class AxesArray1D(AxesArray):
+    """One-dimensional array of Axes with typed indexing.
+
+    This class provides type hints for indexing operations on 1D arrays
+    of Axes objects. Single indices return Axes objects, while slices
+    return new AxesArray1D instances.
+
+    Examples:
+        >>> fig, axes = subplots(1, 3)
+        >>> isinstance(axes[0], Axes)  # Single index returns Axes
+        True
+        >>> isinstance(axes[1:], AxesArray1D)  # Slice returns AxesArray1D
+        True
+    """
+
     @overload
     def __getitem__(self, key: Union[int, tuple[int]]) -> Axes: ...
 
@@ -66,8 +97,24 @@ class AxesArray1D(AxesArray):
     def __getitem__(self, key: Union[slice, tuple[slice]]) -> AxesArray1D: ...
 
     def __getitem__(
-        self, key: Union[int, slice, tuple[int], tuple[slice]]
+        self,
+        key: Union[
+            int,
+            slice,
+            tuple[int],
+            tuple[slice],
+        ],
     ) -> Union[Axes, AxesArray1D]:
+        """Index into the array of Axes objects.
+
+        Args:
+            key: Integer, slice, or 1D tuple of the same.
+
+        Returns:
+            Either a single Axes object or a new AxesArray1D instance,
+            depending on the indexing operation.
+
+        """
         selection = self.np[key]
         if isinstance(selection, Axes):
             return selection
@@ -77,17 +124,47 @@ class AxesArray1D(AxesArray):
 
 
 class AxesArray2D(AxesArray):
+    """Two-dimensional array of Axes with typed indexing.
+
+    This class provides type hints for indexing operations on 2D arrays
+    of Axes. The return type depends on the indexing operation:
+
+    - Single indices return AxesArray1D instances
+    - Double indices return Axes objects
+    - Slices return AxesArray2D instances
+
+    Examples:
+        >>> fig, axes = subplots(2, 2)
+        >>> isinstance(axes[0], AxesArray1D)  # Single index returns AxesArray1D
+        True
+        >>> isinstance(axes[0, 0], Axes)  # Double index returns Axes
+        True
+        >>> isinstance(axes[:, :1], AxesArray2D)  # Slice returns AxesArray2D
+        True
+    """
+
     @overload
     def __getitem__(self, key: tuple[int, int]) -> Axes: ...
 
     @overload
     def __getitem__(
-        self, key: Union[int, tuple[int], tuple[int, slice], tuple[slice, int]]
+        self,
+        key: Union[
+            int,
+            tuple[int],
+            tuple[int, slice],
+            tuple[slice, int],
+        ],
     ) -> AxesArray1D: ...
 
     @overload
     def __getitem__(
-        self, key: Union[slice, tuple[slice], tuple[slice, slice]]
+        self,
+        key: Union[
+            slice,
+            tuple[slice],
+            tuple[slice, slice],
+        ],
     ) -> AxesArray2D: ...
 
     def __getitem__(
@@ -103,6 +180,16 @@ class AxesArray2D(AxesArray):
             tuple[slice, int],
         ],
     ) -> Union[Axes, AxesArray1D, AxesArray2D]:
+        """Index into the array of Axes objects.
+
+        Args:
+            key: An integer, slice, or tuple of integers/slices.
+
+        Returns:
+            Either a single Axes object, an AxesArray1D instance, or an
+            AxesArray2D instance, depending on the indexing operation.
+
+        """
         selection = self.np[key]
         if isinstance(selection, Axes):
             return selection
