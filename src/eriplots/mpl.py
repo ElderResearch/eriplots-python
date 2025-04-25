@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import warnings
-from typing import Literal, Optional, Union, overload
+from typing import Iterator, Literal, Optional, Union, overload
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -42,9 +42,10 @@ class AxesArray:
         """Mark this class as available for use with NumPy."""
         return self.np
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str):
         """Automatically dispatch to NumPy as a fallback."""
-        warnings.warn(f"Missing attribute '{name}' dispatching to NumPy")
+        if not name.startswith("_"):
+            warnings.warn(f"Missing attribute '{name}' dispatching to NumPy")
         return getattr(self.np, name)
 
     # Basic numpy properties
@@ -88,6 +89,10 @@ class AxesArray1D(AxesArray):
         >>> isinstance(axes[1:], AxesArray1D)  # Slice returns AxesArray1D
         True
     """
+
+    def __iter__(self) -> Iterator[Axes]:
+        for ax in self.np:
+            yield ax
 
     @overload
     def __getitem__(self, key: Union[int, tuple[int]]) -> Axes: ...
@@ -141,6 +146,10 @@ class AxesArray2D(AxesArray):
         >>> isinstance(axes[:, :1], AxesArray2D)  # Slice returns AxesArray2D
         True
     """
+
+    def __iter__(self) -> Iterator[AxesArray1D]:
+        for arr in self.np:
+            yield AxesArray1D(arr.view())
 
     @overload
     def __getitem__(self, key: tuple[int, int]) -> Axes: ...

@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Added `__iter()__` methods to `AxesArray1D` and `AxesArray2D` to
+  support type hinting with `zip()`.
+- `AxesArray.__getattr__()` no longer warns when private properties
+  are passed on to its underlying NumPy object. Examining an
+  `AxesArray1D` in Jupyter led to a casacade of warnings.
+
 ### Added
 
 - `alpha(n, max_opacity=0.85)` computes layer opacities such that
