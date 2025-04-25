@@ -10,7 +10,7 @@
 from importlib import metadata as _metadata
 
 from eriplots import colormaps, styles
-from eriplots.mpl import subplots
+from eriplots.mpl import alpha, subplots
 from eriplots.palettes import colors
 from eriplots.savefig import save_figures
 from eriplots.styles import eri_style
@@ -22,6 +22,7 @@ __all__ = [
     "save_figures",
     "colormaps",
     "styles",
+    "alpha",
 ]
 
 # https://packaging.python.org/en/latest/guides/single-sourcing-package-version/

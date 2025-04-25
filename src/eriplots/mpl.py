@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import warnings
-from typing import Literal, Optional, Union, overload
+from typing import Iterator, Literal, Optional, Union, overload
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,8 +12,7 @@ from matplotlib.figure import Figure
 from numpy import flatiter
 from numpy.typing import NDArray
 
-__all__ = ["subplots"]
-
+__all__ = ["subplots", "alpha"]
 
 # AxesArray objects to better hint subplots outputs ------------------
 
@@ -43,9 +42,10 @@ class AxesArray:
         """Mark this class as available for use with NumPy."""
         return self.np
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str):
         """Automatically dispatch to NumPy as a fallback."""
-        warnings.warn(f"Missing attribute '{name}' dispatching to NumPy")
+        if not name.startswith("_"):
+            warnings.warn(f"Missing attribute '{name}' dispatching to NumPy")
         return getattr(self.np, name)
 
     # Basic numpy properties
@@ -89,6 +89,10 @@ class AxesArray1D(AxesArray):
         >>> isinstance(axes[1:], AxesArray1D)  # Slice returns AxesArray1D
         True
     """
+
+    def __iter__(self) -> Iterator[Axes]:
+        for ax in self.np:
+            yield ax
 
     @overload
     def __getitem__(self, key: Union[int, tuple[int]]) -> Axes: ...
@@ -142,6 +146,10 @@ class AxesArray2D(AxesArray):
         >>> isinstance(axes[:, :1], AxesArray2D)  # Slice returns AxesArray2D
         True
     """
+
+    def __iter__(self) -> Iterator[AxesArray1D]:
+        for arr in self.np:
+            yield AxesArray1D(arr.view())
 
     @overload
     def __getitem__(self, key: tuple[int, int]) -> Axes: ...
@@ -339,3 +347,40 @@ def subplots(
 
     else:
         raise ValueError(f"Axes array has ndim = {axes.ndim}")
+
+
+# Layer alpha values -------------------------------------------------
+
+
+def alpha(n: int, max_opacity: float = 0.85) -> float:
+    """Calculate alpha levels for stacked plot components.
+
+    This function calculates alpha (opacity) values for plot components
+    so that when n layers are stacked they have overall alpha =
+    max_opacity.
+
+    Args:
+        n: Target number of stacked layers.
+        max_opacity: The maximum opacity value at n (default: 0.85).
+
+    Returns:
+        A float between 0 and max_opacity.
+
+    Examples:
+        >>> alpha(1)  # Single component
+        0.85
+        >>> alpha(2)  # Two components, each with alpha ~ 0.613
+        0.6127016653792583
+        >>> alpha(3)  # Three components, each with alpha ~ 0.469
+        0.4686707154086944
+        >>> alpha(2, max_opacity=0.8)  # Custom max opacity
+        0.5527864045000421
+
+    """
+    if n <= 0:
+        raise ValueError("n must be positive")
+
+    if max_opacity <= 0 or max_opacity > 1:
+        raise ValueError("max_opacity must be between 0 and 1")
+
+    return 1 - (1 - max_opacity) ** (1 / n)

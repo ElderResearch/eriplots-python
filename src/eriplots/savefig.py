@@ -1,10 +1,10 @@
 """Save raster and vector figures together."""
 
-from typing import Literal, Optional, Union
-from matplotlib.figure import Figure
 from pathlib import Path
-from subprocess import check_call, CalledProcessError, PIPE, DEVNULL
+from subprocess import DEVNULL, PIPE, CalledProcessError, check_call
+from typing import Literal, Optional, Union
 
+from matplotlib.figure import Figure
 
 _SaveTypes = Literal["pdf", "svg", "eps", "png", "tiff", "webp"]
 _optipng: Optional[bool] = None

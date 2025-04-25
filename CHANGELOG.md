@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.3] – 2025-04-25
+
+### Changed
+
+- Added `__iter()__` methods to `AxesArray1D` and `AxesArray2D` to
+  support type hinting with `zip()`.
+- `AxesArray.__getattr__()` no longer warns when private properties
+  are passed on to its underlying NumPy object. Examining an
+  `AxesArray1D` in Jupyter led to a casacade of warnings.
+
+### Added
+
+- `alpha(n, max_opacity=0.85)` computes layer opacities such that
+  n layers stack with a cumulative `max_opacity`.
+
+### Changed
+
+- (DEV) Added isort rules to Ruff
+
 ## [0.1.2] – 2025-04-10
 
 ### Added
@@ -40,7 +59,7 @@ First *eriplots* release!
 - Save figures in multiple formats
 - Color palettes and colormaps
 
-[Unreleased]: https://github.com/ElderResearch/eriplots-python/compare/0.1.0...develop
 [0.1.0]: https://github.com/ElderResearch/eriplots-python/releases/tag/0.1.0
 [0.1.1]: https://github.com/ElderResearch/eriplots-python/releases/tag/0.1.1
 [0.1.2]: https://github.com/ElderResearch/eriplots-python/releases/tag/0.1.2
+[0.1.3]: https://github.com/ElderResearch/eriplots-python/releases/tag/0.1.3

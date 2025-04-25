@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 from typing import Any, Final, Literal, Optional
+
 from cycler import cycler
-from eriplots.palettes import colors
 from matplotlib.pyplot import rcParams
+
+from eriplots.palettes import colors
 
 __all__ = ["eri_style", "font_rel", "font_abs"]
 
