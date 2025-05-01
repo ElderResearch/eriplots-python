@@ -93,7 +93,7 @@ def eri_style(
         dpi = 300
 
     elif profile == "presentation":
-        base_size = 20
+        base_size = 18
         figsize = (7, 4)
         dpi = 300
 

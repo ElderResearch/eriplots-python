@@ -37,7 +37,7 @@ The _eriplots_ library provides a simple, customizable
 "profiles" for common scenarios:
 
 1. **document**: 10 pt base type, 4.5 in × 2.5 in figure at 300 DPI
-2. **presentation**: 20 pt base type, 7 in × 4 in figure at 300 DPI
+2. **presentation**: 18 pt base type, 7 in × 4 in figure at 300 DPI
 
 Both profiles apply a clean style with consistent spacing,
 reduced visual noise, and harmonically-scaled text elements.

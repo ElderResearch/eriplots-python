@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - (DEV) Added a release checklist.
 
+### Changed
+
+- Changed the "presentation" profile to use 18pt text
+
 ## [0.1.3] – 2025-04-25
 
 ### Changed
