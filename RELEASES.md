@@ -10,6 +10,7 @@ _On the `develop` branch._
 
 - [ ] Update the version number in `pyproject.toml`
 - [ ] Check that the change log is current
+- [ ] Check that the README is current
 - [ ] Change the "Unreleased" heading to the new version
 
 ### Merge to `main`
