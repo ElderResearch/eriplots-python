@@ -14,3 +14,13 @@ test:
 # Run Ruff and make safe fixes
 fix:
   uv run ruff check --fix src
+
+# GPT: Fail if the working tree isn't clean
+_git-clean:
+    git diff --quiet
+    git diff --cached --quiet
+
+# Bump to the next dev version
+dev-next: _git-clean
+    uv version --bump patch --bump dev=0
+    git commit -am "Start next development cycle"
