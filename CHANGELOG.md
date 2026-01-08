@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Changed the "presentation" profile to use 18pt text
+- Ensue the user's requested format is present in `save_figures()` if
+  they have not explicitly set the export formats.
 
 ## [0.1.3] – 2025-04-25
 

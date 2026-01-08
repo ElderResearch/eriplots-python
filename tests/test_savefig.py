@@ -181,3 +181,72 @@ def test_optipng_skipped_when_png_not_in_formats(mock_figure, mocker):
     save_figures(mock_figure, path, formats=("pdf", "svg"), optipng=True)
 
     mock_check_call.assert_not_called()
+
+
+def test_extension_added_to_default_formats(mock_figure, mocker):
+    """Test that a valid extension in path is added to default formats."""
+    mocker.patch("eriplots.savefig._webp_supported", return_value=True)
+    path = Path("test_fig.webp")
+    save_figures(mock_figure, path)  # Don't explicitly set formats
+
+    # Should save pdf, png (defaults) + webp (from extension)
+    assert mock_figure.savefig.call_count == 3
+    mock_figure.savefig.assert_any_call(fname=Path("test_fig.pdf"), dpi="figure")
+    mock_figure.savefig.assert_any_call(fname=Path("test_fig.png"), dpi="figure")
+    mock_figure.savefig.assert_any_call(fname=path, dpi="figure")
+
+
+def test_extension_not_added_when_formats_explicit(mock_figure, mocker):
+    """Test that extension is NOT added when formats is explicitly set."""
+    mocker.patch("eriplots.savefig._webp_supported", return_value=True)
+    path = Path("test_fig.webp")
+    save_figures(mock_figure, path, formats=("pdf",))  # Explicitly set formats
+
+    # Should only save pdf (explicit format), NOT webp from extension
+    mock_figure.savefig.assert_called_once_with(fname=Path("test_fig.pdf"), dpi="figure")
+
+
+def test_extension_not_added_when_already_in_formats(mock_figure):
+    """Test that extension is not duplicated if already in default formats."""
+    path = Path("test_fig.png")
+    save_figures(mock_figure, path)  # png is already in default formats
+
+    # Should save pdf and png (defaults), png should not be duplicated
+    assert mock_figure.savefig.call_count == 2
+    mock_figure.savefig.assert_any_call(fname=Path("test_fig.pdf"), dpi="figure")
+    mock_figure.savefig.assert_any_call(fname=path, dpi="figure")
+
+
+def test_invalid_extension_not_added(mock_figure):
+    """Test that an invalid extension is not added to formats."""
+    path = Path("test_fig.jpg")  # jpg is not a valid format
+    save_figures(mock_figure, path)
+
+    # Should only save default formats (pdf, png)
+    assert mock_figure.savefig.call_count == 2
+    mock_figure.savefig.assert_any_call(fname=Path("test_fig.pdf"), dpi="figure")
+    mock_figure.savefig.assert_any_call(fname=Path("test_fig.png"), dpi="figure")
+
+
+def test_svg_extension_added_to_defaults(mock_figure):
+    """Test that svg extension is added when not explicitly setting formats."""
+    path = Path("test_fig.svg")
+    save_figures(mock_figure, path)
+
+    # Should save pdf, png (defaults) + svg (from extension)
+    assert mock_figure.savefig.call_count == 3
+    mock_figure.savefig.assert_any_call(fname=Path("test_fig.pdf"), dpi="figure")
+    mock_figure.savefig.assert_any_call(fname=Path("test_fig.png"), dpi="figure")
+    mock_figure.savefig.assert_any_call(fname=path, dpi="figure")
+
+
+def test_tif_extension_maps_to_tiff_format(mock_figure):
+    """Test that .tif extension maps to tiff format."""
+    path = Path("test_fig.tif")
+    save_figures(mock_figure, path)
+
+    # Should save pdf, png (defaults) + tiff (from .tif extension)
+    assert mock_figure.savefig.call_count == 3
+    mock_figure.savefig.assert_any_call(fname=Path("test_fig.pdf"), dpi="figure")
+    mock_figure.savefig.assert_any_call(fname=Path("test_fig.png"), dpi="figure")
+    mock_figure.savefig.assert_any_call(fname=Path("test_fig.tiff"), dpi="figure")

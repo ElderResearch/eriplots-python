@@ -7,10 +7,24 @@ from typing import Literal, Optional, Union
 from matplotlib.figure import Figure
 
 _SaveTypes = Literal["pdf", "svg", "eps", "png", "tiff", "webp"]
+
+_SUFFIX_TO_FORMAT: dict[str, _SaveTypes] = {
+    "pdf": "pdf",
+    "svg": "svg",
+    "eps": "eps",
+    "png": "png",
+    "tif": "tiff",
+    "tiff": "tiff",
+    "webp": "webp",
+}
+
+_DEFAULT_FORMATS: tuple[_SaveTypes, ...] = ("pdf", "png")
+
 _optipng: Optional[bool] = None
 
 
 def _webp_supported() -> bool:
+    """Determine and report whether WebP is supported."""
     try:
         from PIL import features as _pil_features
     except ImportError:
@@ -25,7 +39,7 @@ def _webp_supported() -> bool:
 def save_figures(
     figure: Figure,
     path: Union[str, Path],
-    formats: Union[_SaveTypes, tuple[_SaveTypes, ...]] = ("pdf", "png"),
+    formats: Optional[Union[_SaveTypes, tuple[_SaveTypes, ...]]] = None,
     dpi: Union[int, Literal["figure"]] = "figure",
     optipng: Optional[bool] = None,
     **kw,
@@ -34,8 +48,19 @@ def save_figures(
 
     path = Path(path)
 
-    if isinstance(formats, str):
+    formats_explicit = formats is not None
+
+    if formats is None:
+        formats = _DEFAULT_FORMATS
+    elif isinstance(formats, str):
         formats = (formats,)
+
+    if not formats_explicit:
+        ext = path.suffix.lstrip(".").lower()
+        if ext in _SUFFIX_TO_FORMAT:
+            fmt = _SUFFIX_TO_FORMAT[ext]
+            if fmt not in formats:
+                formats = (*formats, fmt)
 
     if "webp" in formats and not _webp_supported():
         raise RuntimeError(
