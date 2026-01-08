@@ -20,7 +20,7 @@ _git-clean:
     git diff --quiet
     git diff --cached --quiet
 
-# Bump to the next dev version
+# GPT: Bump to the next dev version
 dev-next: _git-clean
     uv version --bump patch --bump dev=0
     git commit -am "Start next development cycle"
