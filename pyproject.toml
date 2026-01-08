@@ -1,6 +1,6 @@
 [project]
 name = "eriplots"
-version = "0.2.0"
+version = "0.2.1.dev0"
 description = """
     A collection of tools for creating clean and consistent plots
     using matplotlib. Provides standardized themes and tools for
