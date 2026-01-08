@@ -1,8 +1,6 @@
 """Matplotlib style."""
 
-from __future__ import annotations
-
-from typing import Any, Final, Literal, Optional
+from typing import Any, Final, Literal
 
 from cycler import cycler
 from matplotlib.pyplot import rcParams
@@ -34,10 +32,10 @@ def font_abs(n: float) -> float:
 
 
 def eri_style(
-    profile: Optional[Literal["presentation", "document"]] = None,
-    base_size: Optional[float] = None,
+    profile: Literal["presentation", "document"] | None = None,
+    base_size: float | None = None,
     base_family: str = "sans-serif",
-    base_line_size: Optional[float] = None,
+    base_line_size: float | None = None,
 ) -> dict[str, Any]:
     """Define a style via rcParams overrides.
 

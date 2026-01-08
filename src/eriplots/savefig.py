@@ -2,7 +2,7 @@
 
 from pathlib import Path
 from subprocess import DEVNULL, PIPE, CalledProcessError, check_call
-from typing import Literal, Optional, Union
+from typing import Literal
 
 from matplotlib.figure import Figure
 
@@ -20,7 +20,7 @@ _SUFFIX_TO_FORMAT: dict[str, _SaveTypes] = {
 
 _DEFAULT_FORMATS: tuple[_SaveTypes, ...] = ("pdf", "png")
 
-_optipng: Optional[bool] = None
+_optipng: bool | None = None
 
 
 def _webp_supported() -> bool:
@@ -38,10 +38,10 @@ def _webp_supported() -> bool:
 
 def save_figures(
     figure: Figure,
-    path: Union[str, Path],
-    formats: Optional[Union[_SaveTypes, tuple[_SaveTypes, ...]]] = None,
-    dpi: Union[int, Literal["figure"]] = "figure",
-    optipng: Optional[bool] = None,
+    path: str | Path,
+    formats: _SaveTypes | tuple[_SaveTypes, ...] | None = None,
+    dpi: int | Literal["figure"] = "figure",
+    optipng: bool | None = None,
     **kw,
 ) -> None:
     global _optipng
@@ -55,12 +55,10 @@ def save_figures(
     elif isinstance(formats, str):
         formats = (formats,)
 
-    if not formats_explicit:
-        ext = path.suffix.lstrip(".").lower()
-        if ext in _SUFFIX_TO_FORMAT:
-            fmt = _SUFFIX_TO_FORMAT[ext]
-            if fmt not in formats:
-                formats = (*formats, fmt)
+    ext = path.suffix.lstrip(".").lower()
+    if not formats_explicit and ext in _SUFFIX_TO_FORMAT:
+        if (fmt := _SUFFIX_TO_FORMAT[ext]) not in formats:
+            formats = (*formats, fmt)
 
     if "webp" in formats and not _webp_supported():
         raise RuntimeError(
