@@ -89,10 +89,18 @@ ep.save_figures(fig, "plot")
 # Specify the formats: "plot.png"
 ep.save_figures(fig, "plot", formats="png")
 
+# Request WebP (requires Pillow with WebP support)
+ep.save_figures(fig, "plot", formats=("pdf", "webp"))
+
 # Disable PNG optimization
 ep.save_figures(fig, "plot", optipng=False)
 ```
 
+[WebP support][] comes from Pillow; install with `pip install
+"eriplots[webp]"` (or `pip install pillow`) in an environment that has
+WebP codecs (e.g., `libwebp`) available.
+
+[WebP support]: https://pillow.readthedocs.io/en/stable/handbook/image-file-formats.html#webp
 [optipng]: https://optipng.sourceforge.net/
 
 ### Colors and Colormaps

@@ -96,6 +96,30 @@ def test_custom_dpi(mock_figure):
     mock_figure.savefig.assert_called_once_with(fname=path.with_suffix(".pdf"), dpi=300)
 
 
+def test_webp_supported(mock_figure, mocker):
+    """Test saving webp when Pillow supports the format."""
+    mocker.patch("eriplots.savefig._webp_supported", return_value=True)
+
+    path = Path("test_fig")
+    save_figures(mock_figure, path, formats="webp")
+
+    mock_figure.savefig.assert_called_once_with(
+        fname=path.with_suffix(".webp"),
+        dpi="figure",
+    )
+
+
+def test_webp_not_supported(mock_figure, mocker):
+    """Test that requesting webp fails with a helpful error."""
+    mocker.patch("eriplots.savefig._webp_supported", return_value=False)
+
+    path = Path("test_fig")
+    with pytest.raises(RuntimeError, match="WebP"):
+        save_figures(mock_figure, path, formats=("pdf", "webp"))
+
+    mock_figure.savefig.assert_not_called()
+
+
 def test_optipng_false(mock_figure, mocker):
     """Test that optipng is skipped when optipng=False."""
     mock_check_call = mocker.patch("eriplots.savefig.check_call")

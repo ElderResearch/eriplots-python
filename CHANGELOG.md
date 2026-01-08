@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - (DEV) Added a release checklist.
+- Optional WebP figure exports when Pillow is installed with WebP
+  support; request with `formats=("webp", ...)`.
 
 ### Changed
 

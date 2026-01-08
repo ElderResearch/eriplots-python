@@ -15,6 +15,9 @@ dependencies = ["cycler>=0.12.1", "matplotlib>=3.9.4"]
 license = "MIT"
 license-files = ["LICENSE.md"]
 
+[project.optional-dependencies]
+webp = ["pillow>=11.1.0"]
+
 [dependency-groups]
 dev = [
     "mypy>=1.15.0",

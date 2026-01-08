@@ -10,6 +10,18 @@ _SaveTypes = Literal["pdf", "svg", "eps", "png", "tiff", "webp"]
 _optipng: Optional[bool] = None
 
 
+def _webp_supported() -> bool:
+    try:
+        from PIL import features as _pil_features
+    except ImportError:
+        return False
+
+    try:
+        return bool(_pil_features.check("webp"))
+    except Exception:
+        return False
+
+
 def save_figures(
     figure: Figure,
     path: Union[str, Path],
@@ -24,6 +36,13 @@ def save_figures(
 
     if isinstance(formats, str):
         formats = (formats,)
+
+    if "webp" in formats and not _webp_supported():
+        raise RuntimeError(
+            "Saving as .webp requires Pillow built with WebP support. "
+            "Install Pillow with WebP support (often `pip install pillow` "
+            "on systems where libwebp is available)."
+        )
 
     for fmt in formats:
         figure.savefig(fname=path.with_suffix(f".{fmt}"), dpi=dpi, **kw)
