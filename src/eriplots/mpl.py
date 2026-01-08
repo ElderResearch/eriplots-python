@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import warnings
-from typing import Iterator, Literal, Optional, Union, overload
+from collections.abc import Iterator
+from typing import Literal, overload
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -95,20 +96,15 @@ class AxesArray1D(AxesArray):
             yield ax
 
     @overload
-    def __getitem__(self, key: Union[int, tuple[int]]) -> Axes: ...
+    def __getitem__(self, key: int | tuple[int]) -> Axes: ...
 
     @overload
-    def __getitem__(self, key: Union[slice, tuple[slice]]) -> AxesArray1D: ...
+    def __getitem__(self, key: slice | tuple[slice]) -> AxesArray1D: ...
 
     def __getitem__(
         self,
-        key: Union[
-            int,
-            slice,
-            tuple[int],
-            tuple[slice],
-        ],
-    ) -> Union[Axes, AxesArray1D]:
+        key: int | slice | tuple[int] | tuple[slice],
+    ) -> Axes | AxesArray1D:
         """Index into the array of Axes objects.
 
         Args:
@@ -157,37 +153,28 @@ class AxesArray2D(AxesArray):
     @overload
     def __getitem__(
         self,
-        key: Union[
-            int,
-            tuple[int],
-            tuple[int, slice],
-            tuple[slice, int],
-        ],
+        key: int | tuple[int] | tuple[int, slice] | tuple[slice, int],
     ) -> AxesArray1D: ...
 
     @overload
     def __getitem__(
         self,
-        key: Union[
-            slice,
-            tuple[slice],
-            tuple[slice, slice],
-        ],
+        key: slice | tuple[slice] | tuple[slice, slice],
     ) -> AxesArray2D: ...
 
     def __getitem__(
         self,
-        key: Union[
-            int,
-            slice,
-            tuple[int],
-            tuple[slice],
-            tuple[int, int],
-            tuple[slice, slice],
-            tuple[int, slice],
-            tuple[slice, int],
-        ],
-    ) -> Union[Axes, AxesArray1D, AxesArray2D]:
+        key: (
+            int
+            | slice
+            | tuple[int]
+            | tuple[slice]
+            | tuple[int, int]
+            | tuple[slice, slice]
+            | tuple[int, slice]
+            | tuple[slice, int]
+        ),
+    ) -> Axes | AxesArray1D | AxesArray2D:
         """Index into the array of Axes objects.
 
         Args:
@@ -213,14 +200,14 @@ class AxesArray2D(AxesArray):
 
 
 @overload
-def subplots(  # type: ignore  # This actually works
+def subplots(  # type: ignore[overload-overlap]
     nrows: Literal[1] = 1,
     ncols: Literal[1] = 1,
-    figsize: Optional[tuple[float, float]] = None,
-    aspect: Optional[float] = None,
-    dpi: Optional[int] = None,
+    figsize: tuple[float, float] | None = None,
+    aspect: float | None = None,
+    dpi: int | None = None,
     flatten: bool = False,
-    shift: Union[float, tuple[float, float], Literal[True]] = 0,
+    shift: float | tuple[float, float] | Literal[True] = 0,
     **kw,
 ) -> tuple[Figure, Axes]: ...
 
@@ -229,11 +216,11 @@ def subplots(  # type: ignore  # This actually works
 def subplots(
     nrows: Literal[1] = 1,
     ncols: int = ...,
-    figsize: Optional[tuple[float, float]] = None,
-    aspect: Optional[float] = None,
-    dpi: Optional[int] = None,
+    figsize: tuple[float, float] | None = None,
+    aspect: float | None = None,
+    dpi: int | None = None,
     flatten: bool = False,
-    shift: Union[float, tuple[float, float], Literal[True]] = 0,
+    shift: float | tuple[float, float] | Literal[True] = 0,
     **kw,
 ) -> tuple[Figure, AxesArray1D]: ...
 
@@ -242,11 +229,11 @@ def subplots(
 def subplots(
     nrows: int = ...,
     ncols: Literal[1] = 1,
-    figsize: Optional[tuple[float, float]] = None,
-    aspect: Optional[float] = None,
-    dpi: Optional[int] = None,
+    figsize: tuple[float, float] | None = None,
+    aspect: float | None = None,
+    dpi: int | None = None,
     flatten: bool = False,
-    shift: Union[float, tuple[float, float], Literal[True]] = 0,
+    shift: float | tuple[float, float] | Literal[True] = 0,
     **kw,
 ) -> tuple[Figure, AxesArray1D]: ...
 
@@ -255,11 +242,11 @@ def subplots(
 def subplots(
     nrows: int,
     ncols: int,
-    figsize: Optional[tuple[float, float]] = None,
-    aspect: Optional[float] = None,
-    dpi: Optional[int] = None,
+    figsize: tuple[float, float] | None = None,
+    aspect: float | None = None,
+    dpi: int | None = None,
     flatten: bool = False,
-    shift: Union[float, tuple[float, float], Literal[True]] = 0,
+    shift: float | tuple[float, float] | Literal[True] = 0,
     **kw,
 ) -> tuple[Figure, AxesArray2D]: ...
 
@@ -267,13 +254,13 @@ def subplots(
 def subplots(
     nrows: int = 1,
     ncols: int = 1,
-    figsize: Optional[tuple[float, float]] = None,
-    aspect: Optional[float] = None,
-    dpi: Optional[int] = None,
+    figsize: tuple[float, float] | None = None,
+    aspect: float | None = None,
+    dpi: int | None = None,
     flatten: bool = False,
-    shift: Union[float, tuple[float, float], Literal[True]] = 0,
+    shift: float | tuple[float, float] | Literal[True] = 0,
     **kw,
-) -> tuple[Figure, Union[Axes, AxesArray1D, AxesArray2D]]:
+) -> tuple[Figure, Axes | AxesArray1D | AxesArray2D]:
     """Create a figure and one or more subplots.
 
     This extends matplotlib.pyplot.subplots().

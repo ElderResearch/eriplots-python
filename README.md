@@ -37,7 +37,7 @@ The _eriplots_ library provides a simple, customizable
 "profiles" for common scenarios:
 
 1. **document**: 10 pt base type, 4.5 in × 2.5 in figure at 300 DPI
-2. **presentation**: 20 pt base type, 7 in × 4 in figure at 300 DPI
+2. **presentation**: 18 pt base type, 7 in × 4 in figure at 300 DPI
 
 Both profiles apply a clean style with consistent spacing,
 reduced visual noise, and harmonically-scaled text elements.
@@ -89,10 +89,18 @@ ep.save_figures(fig, "plot")
 # Specify the formats: "plot.png"
 ep.save_figures(fig, "plot", formats="png")
 
+# Request WebP (requires Pillow with WebP support)
+ep.save_figures(fig, "plot", formats=("pdf", "webp"))
+
 # Disable PNG optimization
 ep.save_figures(fig, "plot", optipng=False)
 ```
 
+[WebP support][] comes from Pillow; install with `pip install
+"eriplots[webp]"` (or `pip install pillow`) in an environment that has
+WebP codecs (e.g., `libwebp`) available.
+
+[WebP support]: https://pillow.readthedocs.io/en/stable/handbook/image-file-formats.html#webp
 [optipng]: https://optipng.sourceforge.net/
 
 ### Colors and Colormaps

@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] – 2026-01-08
+
+### Added
+
+- (DEV) Added a release checklist.
+- Optional WebP figure exports when Pillow is installed with WebP
+  support; request with `formats=("webp", ...)`.
+
+### Changed
+
+- Changed the "presentation" profile to use 18pt text
+- Ensue the user's requested format is present in `save_figures()` if
+  they have not explicitly set the export formats.
+
 ## [0.1.3] – 2025-04-25
 
 ### Changed
@@ -60,6 +74,7 @@ First *eriplots* release!
 - Color palettes and colormaps
 
 [0.1.0]: https://github.com/ElderResearch/eriplots-python/releases/tag/0.1.0
-[0.1.1]: https://github.com/ElderResearch/eriplots-python/releases/tag/0.1.1
-[0.1.2]: https://github.com/ElderResearch/eriplots-python/releases/tag/0.1.2
-[0.1.3]: https://github.com/ElderResearch/eriplots-python/releases/tag/0.1.3
+[0.1.1]: https://github.com/ElderResearch/eriplots-python/compare/0.1.0...0.1.1
+[0.1.2]: https://github.com/ElderResearch/eriplots-python/compare/0.1.1...0.1.2
+[0.1.3]: https://github.com/ElderResearch/eriplots-python/compare/0.1.2...0.1.3
+[0.2.0]: https://github.com/ElderResearch/eriplots-python/compare/0.1.3...0.2.0

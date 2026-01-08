@@ -35,7 +35,7 @@ def test_shift_true():
     fig, ax = subplots(1, 1, shift=True)
     # The actual value is based on rcParams, so we just check the spine is shifted
     assert ax.spines["left"].get_position()[0] == "outward"
-    assert ax.spines["left"].get_position()[1] > 0
+    assert float(ax.spines["left"].get_position()[1]) > 0
     assert ax.spines["bottom"].get_position()[0] == "outward"
     assert ax.spines["bottom"].get_position()[1] == 0
 

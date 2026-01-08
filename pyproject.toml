@@ -1,6 +1,6 @@
 [project]
 name = "eriplots"
-version = "0.1.3"
+version = "0.2.0"
 description = """
     A collection of tools for creating clean and consistent plots
     using matplotlib. Provides standardized themes and tools for
@@ -10,10 +10,13 @@ authors = [
     { name = "Tom Shafer", email = "tom.shafer@elderresearch.com" },
     { name = "Robert Robison", email = "robert.robison@elderresearch.com" },
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = ["cycler>=0.12.1", "matplotlib>=3.9.4"]
 license = "MIT"
 license-files = ["LICENSE.md"]
+
+[project.optional-dependencies]
+webp = ["pillow>=11.1.0"]
 
 [dependency-groups]
 dev = [
@@ -30,8 +33,11 @@ dev = [
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[tool.pytest.ini_options]
+filterwarnings = ["ignore::DeprecationWarning:matplotlib"]
+
 [tool.ruff]
-target-version = "py39"
+target-version = "py310"
 
 [tool.ruff.lint]
 extend-select = ["I"]

@@ -43,7 +43,7 @@ def test_profile_presentation():
     style = ep.eri_style(profile="presentation")
 
     # Check specific presentation profile attributes
-    assert style["font.size"] == 20
+    assert style["font.size"] == 18
     assert style["figure.figsize"] == (7, 4)
     assert style["savefig.dpi"] == 300
 

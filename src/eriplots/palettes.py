@@ -6,7 +6,11 @@ __all__ = ["colors"]
 
 
 class StrEnum(str, Enum):
-    """An enumeration over string values."""
+    """An enumeration over string values.
+
+    Note: Python 3.11+ has StrEnum in the standard library, but we need
+    to support 3.10 so we keep this simple implementation.
+    """
 
 
 class colors(StrEnum):
